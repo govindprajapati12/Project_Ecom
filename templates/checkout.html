@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - TravelCrafters{% endblock %}
+
+{% block content %}
+<main class="container mt-5">
+    <h1 class="mb-4">Checkout</h1>
+    <div class="row">
+        <div class="col-12">
+            <h2>Your Order</h2>
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.items.all %}
+                    <tr>
+                        <td><img src="{{ item.product.images.first.image.url }}" class="img-thumbnail img-fluid" style="max-width: 100px;" alt="{{ item.product.p_name }}"></td>
+                        <td>{{ item.product.p_name }}</td>
+                        <td>${{ item.product.p_price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.total_price|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                        <td><strong>${{ cart.total_price|floatformat:2 }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <form method="post" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Confirm and Pay</button>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

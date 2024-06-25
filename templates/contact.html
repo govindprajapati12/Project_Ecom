@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block content %}
+ 
+<style>
+    /* body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: black;
+
+    } */
+
+
+    main {
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+    }
+    
+
+    .contact-form {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .contact-form h2 {
+        margin-top: 0;
+    }
+
+    .contact-form label {
+        display: block;
+        margin-bottom: 5px;
+        margin-top: 15px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    .contact-form button {
+        width: 100%;
+        padding: 10px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .contact-form button:hover {
+        background-color: #333;
+    }
+   /* .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }*/
+        h2 {
+            text-align: center;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        .hidden {
+            display: none;
+        }
+
+     
+</style>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDozOZgUDxIaVBXl3UARwBMohXSnGMdy Sk&callback=initMap" async defer></script>
+
+
+<!-- <body> -->
+    <div class="container">
+        <h2>Contact Us</h2>
+        <div id="map"></div>
+        <!-- Other contact information or form can go here -->
+    </div>
+    <main>
+        <section class="contact-form">
+            <h2>We'd love to hear from you!</h2>
+             {% if request.GET.submitted %}
+                <p id="success-message">Your response has been submitted!</p>
+            {% endif %}
+            <form id="contact-form">
+            
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+    </main>
+    <script>
+        function initMap() {
+            // The location of your business
+            const location = { lat: 23.02111172914225,lng:72.59556143363166 };
+
+            // The map, centered at your location
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: location,
+            });
+
+            // The marker, positioned at your location
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const successMessage = document.getElementById("success-message");
+            if (successMessage) {
+                setTimeout(function() {
+                    successMessage.classList.add("hidden");
+                }, 5000); // 5000 milliseconds = 5 seconds
+            }
+        });
+
+    </script>
+<!-- </body> -->
+{% endblock %}

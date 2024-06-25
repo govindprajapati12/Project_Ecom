@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Cart - TravelCrafters{% endblock %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">Your Cart</h1>
+            <div class="cart-items">
+                {% if cart_items %}
+                    {% for item in cart_items %}
+                        <div class="card mb-3">
+                            <div class="row no-gutters flex-wrap">
+                                <div class="col-12 col-md-4">
+                                    <img src="{{ item.product.p_image.url }}" class="card-img" alt="{{ item.product.p_name }}">
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ item.product.p_name }}</h5>
+                                        <p class="card-text">Price per piece: ${{ item.product.p_price }}</p>
+                                        <div class="d-flex flex-wrap align-items-center">
+                                            <form action="{% url 'update_cart' item.id %}" method="post" class="d-flex align-items-center mr-2 mb-2">
+                                                {% csrf_token %}
+                                                <div class="form-group mb-0">
+                                                    <label for="quantity-{{ item.id }}" class="sr-only">Quantity</label>
+                                                    <input type="number" name="quantity" id="quantity-{{ item.id }}" class="form-control w-auto" value="{{ item.quantity }}" min="1">
+                                                </div>
+                                                <button type="submit" class="btn btn-sm ml-2" style="background-color:#000;color:white;">Update</button>
+                                            </form>
+                                            <form action="{% url 'remove_from_cart' item.id %}" method="post" class="d-inline mb-2">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                            </form>
+                                        </div>
+                                        <p class="card-text mt-2">Total Price: ${{ item.total_price }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        Your cart is empty.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Cart Summary</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Total Price:</h6>
+                        <h6 class="mb-0">${{ total_price }}</h6>
+                    </div>
+                    <a href="#" class="btn btn-block" style="background-color:green;color:white;">Proceed to Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

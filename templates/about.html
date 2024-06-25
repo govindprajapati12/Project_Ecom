@@ -1,0 +1,25 @@
+<!-- templates/about_us.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - TravelCrafters{% endblock %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">About TravelCrafters</h1>
+            <img src="{% static 'logo.png' %}" alt="TravelCrafters Logo" class="img-fluid rounded-circle d-block mx-auto mb-4" style="max-width: 200px; background-color:black;">
+            <p class="text-center">TravelCrafters is a new startup specializing in the manufacturing of high-quality bags designed for life on-the-go. Our mission is to create stylish and functional bags that enhance the travel experience.</p>
+            <h3 class="text-center mb-4">Our Founder - Govind Prajapati</h3>
+            <img src="{% static 'founder.png' %}" alt="Govind Prajapati" class="img-fluid rounded-circle d-block mx-auto mb-4" style="max-width: 200px;">
+            <p class="text-center">Govind Prajapati, the founder of TravelCrafters, is a visionary entrepreneur with a passion for creating innovative products. With years of experience in the bag manufacturing industry, Govind aims to revolutionize the way people travel with his unique and durable bag designs.</p>
+            <h3 class="text-center mb-4">Our Products</h3>
+            <p class="text-center">At TravelCrafters, we offer a wide range of bags including travel bags, backpacks, and accessories. Each product is carefully crafted using the finest materials to ensure durability and style.</p>
+            <h3 class="text-center mb-4">Contact Us</h3>
+            <p class="text-center">For inquiries and collaborations, please email us at <a href="mailto:info@travelcrafters.com">info@travelcrafters.com</a> or call us at <a href="+91 9727361567">+91 9727361567</a>.</p>
+        </div>
+    </div>
+</main>
+{% endblock %}
+

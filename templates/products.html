@@ -1,0 +1,40 @@
+<!-- templates/products.html -->
+{% extends 'base.html' %} {% load static %} {% block title %}Products -
+TravelCrafters{% endblock %} {% block content %}
+<main class="container mt-5">
+  <h1 class="text-center mb-4">Products</h1>
+  <div class="row">
+    {% for product in products %}
+    <div class="col-md-4">
+      <div class="card mb-4">
+        {% if product.p_image %}
+        <img
+          src="{{ product.p_image.url }}"
+          class="card-img-top"
+          alt="{{ product.p_name }}"
+        />
+        {% else %}
+        <div
+          class="card-img-top d-flex align-items-center justify-content-center"
+          style="height: 200px; background-color: #f8f9fa"
+        >
+          <span class="text-muted">{{ product.p_name }}</span>
+        </div>
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ product.p_name }}</h5>
+          <p class="card-text">{{ product.p_details|safe }}</p>
+          <p class="card-text">Price: {{ product.p_price }}</p>
+          <a
+            href="{% url 'product_detail' product.p_id category.c_id %}"
+            class="btn"
+            style="background-color: #000; color: white"
+            >View Details</a
+          >
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</main>
+{% endblock %}

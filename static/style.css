@@ -1,0 +1,86 @@
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+.navbar-brand img {
+    max-width: 50px;
+    margin-right: 10px;
+}
+
+.card {
+    margin-bottom: 30px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+footer {
+    margin-top: 30px;
+}
+
+footer h5 {
+    font-weight: bold;
+}
+
+footer ul li {
+    margin-bottom: 10px;
+}
+
+footer ul li a {
+    text-decoration: none;
+}
+
+.header {
+    background-color: black;
+    color: white;
+}
+
+.bg-custom {
+    background-color: black;
+}
+
+.navbar-brand {
+    color: white;
+}
+
+a button {
+    width: 100%;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.nav-item .active {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    text-decoration: underline;
+}
+
+.category-header {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.category-header img {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    border-radius: 10px;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link:hover {
+    color: #6c757d;
+}
+
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+}
