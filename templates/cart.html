@@ -56,7 +56,14 @@
                         <h6 class="mb-0">Total Price:</h6>
                         <h6 class="mb-0">${{ total_price }}</h6>
                     </div>
-                    <a href="#" class="btn btn-block" style="background-color:green;color:white;">Proceed to Checkout</a>
+                    {% if cart_items %}
+                        <form action="{% url 'generate_quotation' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-block" style="background-color:green;color:white;">Get Instant Quotes</button>
+                        </form>
+                    {% else %}
+                        <button class="btn btn-block" style="background-color:green;color:white;" disabled>Get Instant Quotes</button>
+                    {% endif %}
                 </div>
             </div>
         </div>

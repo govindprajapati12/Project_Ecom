@@ -47,6 +47,12 @@ urlpatterns = [
     path('cart/', views.cart_view, name='cart_view'),
     path('remove-from-cart/<int:cart_item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('update_cart/<int:cart_item_id>/', views.update_cart, name='update_cart'),
+    path('generate_quotation/', views.generate_quotation, name='generate_quotation'),
+    path('quotation/<int:quotation_id>/', views.view_quotation, name='view_quotation'),
+    path('place_order/<int:quotation_id>/', views.place_order, name='place_order'),
+    path('order/<int:order_id>/', views.view_order, name='view_order'),
+    path('oders_detail/',views.myorder_list,name='myorder_list'),
+    
 
 
     ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

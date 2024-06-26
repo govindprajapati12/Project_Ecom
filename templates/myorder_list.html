@@ -1,0 +1,23 @@
+<!-- myorder_list.html -->
+
+{% extends 'base.html' %}
+{% block title %}My Orders - TravelCrafters{% endblock %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">My Orders</h1>
+            <ul class="list-group">
+                {% for order in orders %}
+                    <li class="list-group-item">
+                        <a href="{% url 'view_order' order_id=order.id %}">Order ID: {{ order.id }}</a> - Placed on: {{ order.created_at }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No orders found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Details - TravelCrafters{% endblock %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">Order Details</h1>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Order ID: {{ order.id }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Placed on: {{ order.created_at }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Contact: {{ order.business_contact_name }} ({{ order.business_contact_number }})</h6>
+                    {% if order.description %}
+                    <h6 class="card-subtitle mb-2 text-muted">Description: {{ order.description }}</h6>
+                    {% endif %}
+                    <hr>
+                    <h5 class="card-title">Items</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for item in order_items %}
+                            <li class="list-group-item">
+                                {{ item.product.p_name }} - {{ item.quantity }} x ${{ item.unit_price }} = ${{ item.total_price }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <hr>
+                    <h5 class="card-title">Total Price: ${{ total_price }}</h5>
+                    <p class="card-text mt-3">Thank you for your order! If you have any questions, feel free to contact us at the provided number.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}Quotation - TravelCrafters{% endblock %} 
+{% block content %}
+<main class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="card-body">
+          <header class="mb-4">
+            <h1 class="text-center">TravelCrafters Quotation</h1>
+            <p class="text-center">123 Business St., Business City, BC 12345</p>
+            <p class="text-center">Phone: (123) 456-7890 | Email: info@travelcrafters.com</p>
+            <hr>
+          </header>
+          <section>
+            <h2 class="mb-3">Quotation Details</h2>
+            <p><strong>Customer Name:</strong> {{ quotation.user.get_full_name }}</p>
+            <p><strong>Quotation Date:</strong> {{ quotation.date }}</p>
+            <hr>
+          </section>
+          <section>
+            <h2 class="mb-3">Products</h2>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in quotation.items.all %}
+                <tr>
+                  <td>{{ item.product_name }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.unit_price }}</td>
+                  <td>{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <p class="text-end"><strong>Total Amount:</strong> {{ quotation.total_amount }}</p>
+            <hr>
+          </section>
+          <section>
+            <h2 class="mb-3">Thank You!</h2>
+            <p>Thank you for considering TravelCrafters for your needs. We are committed to providing you with the highest quality products and service. If you have any questions or need further assistance, please don't hesitate to contact us.</p>
+          </section>
+          <footer>
+            <h2 class="mb-3">Contact Us</h2>
+            <p>If you have any queries regarding your order, please contact:</p>
+            <p><strong>Business Contact:</strong> Mr. Govind Prajapati</p>
+            <p><strong>Phone:</strong> (123) 456-7891</p>
+            <p><strong>Email:</strong> govind.prajapati@travelcrafters.com</p>
+            <p>We look forward to serving you!</p>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<style>
+  header, section, footer {
+    margin-bottom: 20px;
+  }
+  h1, h2 {
+    color: #000;
+  }
+  p, table {
+    color: #333;
+  }
+  .card {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+</style>
+{% endblock %}

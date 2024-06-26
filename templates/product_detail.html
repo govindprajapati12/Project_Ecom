@@ -1,25 +1,25 @@
-{% extends 'base.html' %} 
-{% load static %} 
-{% block title %}{{ product.p_name }} - TravelCrafters{% endblock %} 
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ product.p_name }} - TravelCrafters{% endblock %}
 {% block content %}
 <main class="container mt-5">
   <div class="row">
     <div class="col-md-6">
       <h1 class="mb-4">{{ product.p_name }}</h1>
-      <div class="row1">
+      <div class="row">
         <div class="col-12">
           <div id="productImagesCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
               {% if product.images.all %}
-              {% for image in product.images.all %}
-              <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <img src="{{ image.image.url }}" class="d-block w-100 img-fluid" alt="{{ product.p_name }}">
-              </div>
-              {% endfor %}
+                {% for image in product.images.all %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ image.image.url }}" class="d-block w-100 img-fluid carousel-image" alt="{{ product.p_name }}" />
+                  </div>
+                {% endfor %}
               {% else %}
-              <div class="carousel-item active">
-                <img src="{{ product.p_image.url }}" class="d-block w-100 img-fluid" alt="{{ product.p_name }}">
-              </div>
+                <div class="carousel-item active">
+                  <img src="{{ product.p_image.url }}" class="d-block w-100 img-fluid carousel-image" alt="{{ product.p_name }}" />
+                </div>
               {% endif %}
             </div>
           </div>
@@ -27,9 +27,9 @@
         <div class="col-12 mt-3">
           <div class="row">
             {% for image in product.images.all %}
-            <div class="col-3 col-sm-2 mb-2">
-              <img src="{{ image.image.url }}" class="img-thumbnail img-fluid product-thumbnail" alt="{{ product.p_name }}" data-index="{{ forloop.counter0 }}">
-            </div>
+              <div class="col-3 col-sm-2 mb-2">
+                <img src="{{ image.image.url }}" class="img-thumbnail img-fluid product-thumbnail" alt="{{ product.p_name }}" data-index="{{ forloop.counter0 }}" />
+              </div>
             {% endfor %}
           </div>
         </div>
@@ -44,10 +44,31 @@
             {% csrf_token %}
             <div class="mb-3">
               <label for="quantity" class="form-label">Quantity:</label>
-              <input type="number" id="quantity" name="quantity" value="100" min="100" class="form-control">
+              <input type="number" id="quantity" name="quantity" value="100" min="100" class="form-control" />
             </div>
-            <button type="submit" class="btn btn-dark">Add to Cart</button>
+            <button type="submit" class="btn btn-dark">
+              Add to Cart
+            </button>
           </form>
+        </div>
+      </div>
+
+      <!-- Similar Products Section -->
+      <div class="mt-5">
+        <h3>Similar Products</h3>
+        <div class="row mt-3">
+          {% for similar_product in similar_products %}
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 shadow-sm">
+                <img src="{{ similar_product.p_image.url }}" class="card-img-top img-fluid similar-product-image" alt="{{ similar_product.p_name }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ similar_product.p_name }}</h5>
+                  <p class="card-text">Price: {{ similar_product.p_price }}</p>
+                  <a href="{% url 'product_detail' similar_product.p_id category.pk %}" class="btn stretched-link" style="background-color:#000;color:white">View Product</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -55,16 +76,19 @@
 </main>
 
 <style>
-    .row{
-        border:1px solid black;
-        display:flex;
-    }
   .product-thumbnail {
     cursor: pointer;
   }
-  .carousel-item img {
+  .carousel-item img,
+  .similar-product-image {
     object-fit: cover;
-    height: 500px; /* Adjust height as needed */
+    height: 300px; /* Adjust height as needed */
+  }
+  .card {
+    transition: transform 0.2s ease-in-out;
+  }
+  .card:hover {
+    transform: translateY(-10px); /* Lifts the card on hover */
   }
 </style>
 

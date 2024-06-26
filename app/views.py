@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse , HttpResponseRedirect
 from products.models import * 
-from django.contrib.auth import login, authenticate,logout
+from django.contrib.auth import login, authenticate,logout,get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .forms import SignUpForm, SignInForm,ProfileUpdateForm
@@ -12,6 +12,8 @@ from .forms import User
 from django.core.mail import send_mail
 # from .models import UserProfile
 from .forms import QuantityForm
+from django.db import transaction
+
 # Create your views here.
 def home_view(request):
     return render(request,"home.html")
@@ -20,7 +22,7 @@ def home_page(request):
     context={
         'category_data':category_data,
     }
-    print(context,"-------------------------")
+    # print(context,"-------------------------")
 
     return render(request,"index.html",context)
 
@@ -59,8 +61,9 @@ def product_detail(request, product_id,c_id):
     product = get_object_or_404(Product, p_id=product_id)
     category = Category.objects.get(pk=c_id)
     products = category.products.all()
-    print(category)
-    print(products)
+    similar_products = category.products.exclude(p_id=product_id)
+    # print(category)
+    # print(products)
     
     if request.method == 'POST':
         form = QuantityForm(request.POST)
@@ -73,6 +76,8 @@ def product_detail(request, product_id,c_id):
     context = {
         'product': product,
         'form': form,
+        'similar_products': similar_products,
+        'category': category,
     }
     return render(request, 'product_detail.html',context)
 
@@ -82,7 +87,7 @@ def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
 
     if request.method == 'POST':
-        quantity = int(request.POST.get('quantity', 100))
+        quantity = int(request.POST.get('quantity'))
 
         # Get or create the cart for the current user and product
         cart, created = Cart.objects.get_or_create(user=request.user, product=product)
@@ -201,3 +206,92 @@ def sign_up(request):
 def logout_view(request):
     logout(request)
     return redirect('home_page')  # Redirect to the home page after logging out
+
+
+# def get_cart_items(user):
+    # return Cart.objects.filter(user=user)
+
+@login_required
+def generate_quotation(request):
+    user = request.user
+    cart_items = Cart.objects.filter(user=user)
+    total_amount = sum(item.product.p_price * item.quantity for item in cart_items)
+    
+    quotation = Quotation.objects.create(user=user, total_amount=total_amount)
+    
+    for item in cart_items:
+        QuotationItem.objects.create(
+            quotation=quotation,
+            product_name=item.product.p_name,
+            quantity=item.quantity,
+            unit_price=item.product.p_price,
+            total_price=item.product.p_price * item.quantity
+        )
+    
+    # cart_items.delete()
+    
+    return redirect('view_quotation', quotation_id=quotation.id)
+@login_required
+def view_quotation(request, quotation_id):
+    quotation = get_object_or_404(Quotation, id=quotation_id)
+    return render(request, 'quotation.html', {'quotation': quotation}) 
+
+
+
+
+@login_required
+def place_order(request, quotation_id):
+    quotation = get_object_or_404(Quotation, id=quotation_id)
+    cart_items = Cart.objects.filter(user=request.user)
+    admin_user = User.objects.first()  # Assuming the first user is the admin; adjust as necessary
+    # print(cart_items)
+    if not admin_user:
+        return redirect('view_quotation', quotation_id=quotation.id)
+
+    try:
+        with transaction.atomic():
+            # Create the Order instance
+            order = Order.objects.create(
+                user=request.user,
+                quotation=quotation,
+                business_contact_name=admin_user.username,
+                business_contact_number=admin_user.phone_number  # Adjust to match your custom user field
+            )
+
+            # Create OrderItem instances for each cart item
+            for cart_item in cart_items:
+                total_price = cart_item.product.p_price * cart_item.quantity  # Calculate total price
+                # name=cart_item.objects.all()
+               
+                OrderItem.objects.create(
+                    order=order,
+                    product=cart_item.product,
+                    quantity=cart_item.quantity,
+                    unit_price=cart_item.product.p_price,
+                    total_price=total_price  # Save calculated total price
+                )
+
+
+            # Clear the cart after successful order placement
+            cart_items.delete()
+
+            # Redirect to view the order details
+            return redirect('view_order', order_id=order.id) 
+
+    except Exception as e:
+        # Handle any exceptions or rollback if necessary
+        print(f"Error placing order: {e}")
+        return redirect('view_quotation', quotation_id=quotation.id)
+@login_required
+def view_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order_items = OrderItem.objects.filter(order=order)
+    total_price = sum(item.total_price for item in order_items)
+    return render(request, 'view_order.html', {'order': order, 'order_items': order_items, 'total_price': total_price})
+
+@login_required
+def myorder_list(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'myorder_list.html', {'orders': orders})
+
+
