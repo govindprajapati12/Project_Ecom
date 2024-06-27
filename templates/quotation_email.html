@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Travel Crafters Quotation</title>
+    <style>
+        /* Add your email styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 100px;
+            height: auto;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .quotation-details {
+            margin-bottom: 20px;
+        }
+        .quotation-details p {
+            margin: 10px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{#}" alt="Travel Crafters Logo">
+            <h1>Your Travel Crafters Quotation</h1>
+        </div>
+        <p>Dear {{ user.username }},</p>
+        <div class="quotation-details">
+            <p>Thank you for your interest in Travel Crafters. Here are the details of your quotation:</p>
+            <ul>
+                {% for item in quotation.quotation_items.all %}
+                <li>{{ item.product_name }} - Quantity: {{ item.quantity }} - Total Price: ${{ item.total_price }}</li>
+                {% endfor %}
+            </ul>
+            <p>Total Amount: ${{ quotation.total_amount }}</p>
+        </div>
+        <p>If you have any questions or need further assistance, feel free to contact us at:</p>
+        <p><strong>Business Contact:</strong> Mr. Govind Prajapati</p>
+        <p><strong>Phone:</strong> (123) 456-7891</p>
+        <p><strong>Email:</strong> govind.prajapati@travelcrafters.com</p>
+        <p>Best regards,<br>The Travel Crafters Team</p>
+        <div class="footer">
+            <p>&copy; 2024 Travel Crafters. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

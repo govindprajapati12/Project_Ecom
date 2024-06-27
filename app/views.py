@@ -13,14 +13,23 @@ from django.core.mail import send_mail
 # from .models import UserProfile
 from .forms import QuantityForm
 from django.db import transaction
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Create your views here.
 def home_view(request):
-    return render(request,"home.html")
+    categories = Category.objects.all()  # Fetch all categories from database
+    
+    context = {
+        'categories': categories,  # Pass categories to the template context
+    }
+    return render(request, 'home.html', context)
 def home_page(request):
     category_data=Category.objects.all()
+
     context={
         'category_data':category_data,
+
     }
     # print(context,"-------------------------")
 
@@ -45,14 +54,30 @@ def contact(request):
 def about(request):
     return render(request,'about.html')
 
+def search_categories(request):
+    query = request.GET.get('query')
+    c_id = request.GET.get('c_id')
+
+    if c_id:
+        categories = Category.objects.filter(pk=c_id)
+    elif query:
+        categories = Category.objects.filter(c_name__icontains=query)
+    else:
+        categories = Category.objects.all()
+
+    context = {
+        'categories': categories,
+        'query': query,
+    }
+    return render(request, 'search_results.html', context)
 def products(request, c_id):
     category = Category.objects.get(pk=c_id)
     products = category.products.all()
-    categories = Category.objects.all()
+    # categories = Category.objects.all()
     context = {
         'category': category,
         'products': products,
-        'categories': categories  # Pass categories to context
+        # 'categories': categories  # Pass categories to context
     }
     return render(request, 'products.html', context)
 
@@ -60,7 +85,7 @@ def products(request, c_id):
 def product_detail(request, product_id,c_id):
     product = get_object_or_404(Product, p_id=product_id)
     category = Category.objects.get(pk=c_id)
-    products = category.products.all()
+    # products = category.products.all()
     similar_products = category.products.exclude(p_id=product_id)
     # print(category)
     # print(products)
@@ -69,9 +94,8 @@ def product_detail(request, product_id,c_id):
         form = QuantityForm(request.POST)
         if form.is_valid():
             quantity = form.cleaned_data['quantity']
-            # Handle adding to cart logic here
     else:
-        form = QuantityForm(initial={'quantity': 100})
+        form = QuantityForm(initial={'quantity': 100}) 
     
     context = {
         'product': product,
@@ -80,8 +104,30 @@ def product_detail(request, product_id,c_id):
         'category': category,
     }
     return render(request, 'product_detail.html',context)
-
-
+def filter_products(request):
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    c_id = request.GET.get('c_id', None)
+    
+    products = Product.objects.all()
+    
+    if c_id:
+        try:
+            category = Category.objects.get(pk=c_id)
+            products = products.filter(c_id=category)
+        except Category.DoesNotExist:
+            pass
+    
+    if min_price:
+        products = products.filter(p_price__gte=min_price)
+    if max_price:
+        products = products.filter(p_price__lte=max_price)
+    
+    context = {
+        'products': products,
+        'category': category if 'category' in locals() else None,
+    }
+    return render(request, 'products.html', context)
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -205,9 +251,16 @@ def sign_up(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('home_page')  # Redirect to the home page after logging out
+    return redirect('home_view')  # Redirect to the home page after logging out
 
-
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        logout(request)
+        return redirect('home_view')  # Replace 'home' with your desired redirect URL after account deletion
+    return render(request, 'profile.html')  # Replace 'profile.html' with your actual profile page template
 # def get_cart_items(user):
     # return Cart.objects.filter(user=user)
 
@@ -228,15 +281,36 @@ def generate_quotation(request):
             total_price=item.product.p_price * item.quantity
         )
     
-    # cart_items.delete()
+    # Send email with quotation details
+    send_quotation_email(user, quotation)
+    
+    # Clear the cart after successful quotation generation
+    cart_items.delete()
     
     return redirect('view_quotation', quotation_id=quotation.id)
+
+def send_quotation_email(user, quotation):
+    subject = 'Your Travel Crafters Quotation'
+    from_email = 'TravelCrafters10@gmail.com'
+    to_email = [user.email]
+    
+    # Render email content from template
+    html_content = render_to_string('quotation_email.html', {'user': user, 'quotation': quotation})
+    text_content = strip_tags(html_content)  # Strip HTML tags for the plain text email
+    
+    # Send email
+    send_mail(subject, text_content, from_email, to_email, html_message=html_content)
+
 @login_required
 def view_quotation(request, quotation_id):
     quotation = get_object_or_404(Quotation, id=quotation_id)
     return render(request, 'quotation.html', {'quotation': quotation}) 
 
-
+@login_required
+def my_quotations(request):
+    user = request.user
+    quotations = Quotation.objects.filter(user=user)
+    return render(request, 'my_quotations.html', {'quotations': quotations})
 
 
 @login_required
@@ -244,7 +318,7 @@ def place_order(request, quotation_id):
     quotation = get_object_or_404(Quotation, id=quotation_id)
     cart_items = Cart.objects.filter(user=request.user)
     admin_user = User.objects.first()  # Assuming the first user is the admin; adjust as necessary
-    # print(cart_items)
+    
     if not admin_user:
         return redirect('view_quotation', quotation_id=quotation.id)
 
@@ -261,8 +335,6 @@ def place_order(request, quotation_id):
             # Create OrderItem instances for each cart item
             for cart_item in cart_items:
                 total_price = cart_item.product.p_price * cart_item.quantity  # Calculate total price
-                # name=cart_item.objects.all()
-               
                 OrderItem.objects.create(
                     order=order,
                     product=cart_item.product,
@@ -271,17 +343,38 @@ def place_order(request, quotation_id):
                     total_price=total_price  # Save calculated total price
                 )
 
-
             # Clear the cart after successful order placement
             cart_items.delete()
 
+            # Send confirmation email
+            html_content = render_to_string('order_confirmation_email.html', {
+                'user': request.user,
+                'order': order,
+                'order_items': OrderItem.objects.filter(order=order),
+                'total_price': sum(item.total_price for item in OrderItem.objects.filter(order=order)),
+                'business_contact_name': admin_user.username,
+                'business_contact_number': admin_user.phone_number,
+            })
+
+            send_mail(
+                subject='Order Confirmation from Travel Crafters',
+                message='',
+                from_email='TravelCrafters10@gmail.com',
+                recipient_list=[request.user.email],
+                fail_silently=False,
+                html_message=html_content,
+            )
+
+            messages.success(request, 'Your order has been placed successfully and a confirmation email has been sent.')
+
             # Redirect to view the order details
-            return redirect('view_order', order_id=order.id) 
+            return redirect('view_order', order_id=order.id)
 
     except Exception as e:
         # Handle any exceptions or rollback if necessary
         print(f"Error placing order: {e}")
         return redirect('view_quotation', quotation_id=quotation.id)
+
 @login_required
 def view_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)

@@ -48,6 +48,11 @@ class QuantityForm(forms.Form):
     quantity = forms.IntegerField(min_value=100, initial=100, label='Quantity')
 
 
+
+# class CategorySearchForm(forms.Form):
+#     query = forms.CharField(label='Search Categories', max_length=100)
+
+
 #     def __init__(self, *args, **kwargs):
 #         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
 #         # print("------args, kwargs----", args)

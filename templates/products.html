@@ -1,23 +1,47 @@
-<!-- templates/products.html -->
-{% extends 'base.html' %} {% load static %} {% block title %}Products -
-TravelCrafters{% endblock %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Products - TravelCrafters{% endblock %}
+{% block content %}
 <main class="container mt-5">
   <h1 class="text-center mb-4">Products</h1>
+
+  <!-- Price Filter -->
+  <form method="GET" action="{% url 'filter_products' %}" class="mb-4">
+    <div class="input-group">
+      <select name="min_price" class="form-control mr-2">
+        <option value="" selected disabled>Select Min Price</option>
+        <option value="100">100</option>
+        <option value="200">200</option>
+        <option value="300">300</option>
+        <option value="400">400</option>
+        <!-- Add more options as needed -->
+      </select>
+      <select name="max_price" class="form-control mr-2">
+        <option value="" selected disabled>Select Max Price</option>
+        <option value="200">200</option>
+        <option value="300">300</option>
+        <option value="400">400</option>
+        <option value="500">500</option>
+        <!-- Add more options as needed -->
+      </select>
+      
+      <!-- Include hidden field to pass category ID -->
+      <input type="hidden" name="c_id" value="{{ category.pk }}" />
+      
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-dark">Filter</button>
+      </div>
+    </div>
+  </form>
+
   <div class="row">
     {% for product in products %}
     <div class="col-md-4">
       <div class="card mb-4">
         {% if product.p_image %}
-        <img
-          src="{{ product.p_image.url }}"
-          class="card-img-top"
-          alt="{{ product.p_name }}"
-        />
+        <img src="{{ product.p_image.url }}" class="card-img-top" alt="{{ product.p_name }}">
         {% else %}
-        <div
-          class="card-img-top d-flex align-items-center justify-content-center"
-          style="height: 200px; background-color: #f8f9fa"
-        >
+        <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa">
           <span class="text-muted">{{ product.p_name }}</span>
         </div>
         {% endif %}
@@ -25,12 +49,8 @@ TravelCrafters{% endblock %} {% block content %}
           <h5 class="card-title">{{ product.p_name }}</h5>
           <p class="card-text">{{ product.p_details|safe }}</p>
           <p class="card-text">Price: {{ product.p_price }}</p>
-          <a
-            href="{% url 'product_detail' product.p_id category.c_id %}"
-            class="btn"
-            style="background-color: #000; color: white"
-            >View Details</a
-          >
+          <!-- Ensure category.c_id is correctly used in URL -->
+          <a href="{% url 'product_detail' product.p_id product.c_id_id %}" class="btn" style="background-color: #000; color: white">View Details</a>
         </div>
       </div>
     </div>

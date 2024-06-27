@@ -39,10 +39,9 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('products/<int:c_id>/', views.products, name='products_page'),
     path('products/', views.products, name='products'),
- 
-    
-    # path('profile/', views.profile, name='profile'),
-    path('product/<int:product_id><int:c_id>/', views.product_detail, name='product_detail'),
+    path('search/', views.search_categories, name='search_categories'),
+    path('filter-products/', views.filter_products, name='filter_products'),
+    path('product/<int:product_id>/<int:c_id>/', views.product_detail, name='product_detail'),
     path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.cart_view, name='cart_view'),
     path('remove-from-cart/<int:cart_item_id>/', views.remove_from_cart, name='remove_from_cart'),
@@ -52,6 +51,8 @@ urlpatterns = [
     path('place_order/<int:quotation_id>/', views.place_order, name='place_order'),
     path('order/<int:order_id>/', views.view_order, name='view_order'),
     path('oders_detail/',views.myorder_list,name='myorder_list'),
+    path('delete-account/', views.delete_account, name='delete_account'),
+    path('my-quotations/', views.my_quotations, name='my_quotations'),
     
 
 

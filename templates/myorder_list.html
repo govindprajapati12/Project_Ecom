@@ -1,23 +1,29 @@
 <!-- myorder_list.html -->
-
 {% extends 'base.html' %}
 {% block title %}My Orders - TravelCrafters{% endblock %}
 
 {% block content %}
 <main class="container mt-5">
+    <h1 class="mb-4">My Orders</h1>
+    {% if orders %}
     <div class="row">
-        <div class="col-md-12">
-            <h1 class="mb-4">My Orders</h1>
-            <ul class="list-group">
-                {% for order in orders %}
-                    <li class="list-group-item">
-                        <a href="{% url 'view_order' order_id=order.id %}">Order ID: {{ order.id }}</a> - Placed on: {{ order.created_at }}
-                    </li>
-                {% empty %}
-                    <li class="list-group-item">No orders found.</li>
-                {% endfor %}
-            </ul>
+        {% for order in orders %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Order ID: {{ order.id }}</h5>
+                    <p class="card-text">Placed on: {{ order.created_at }}</p>
+                    <!-- Add more details as needed -->
+                    <a href="{% url 'view_order' order_id=order.id %}" class="btn"style="background-color:#000;color:white;">View Details</a>
+                </div>
+            </div>
         </div>
+        {% endfor %}
     </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        No orders found.
+    </div>
+    {% endif %}
 </main>
 {% endblock %}

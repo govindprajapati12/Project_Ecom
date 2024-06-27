@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 100px;
+            height: auto;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .order-details {
+            margin-bottom: 20px;
+        }
+        .order-details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .order-details ul li {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .order-details ul li img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="placeholder_logo.png" alt="Travel Crafters Logo">
+            <h1>Thank You for Your Order!</h1>
+        </div>
+        <p>Dear {{ user.username }},</p>
+        <p>Thank you for placing an order with Travel Crafters. Your order ID is <strong>{{ order.id }}</strong>.</p>
+        <div class="order-details">
+            <p>Order Details:</p>
+            <ul>
+                {% for item in order_items %}
+                <li>
+                    {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.p_name }}">
+                    {% endif %}
+                    <div>
+                        <p><strong>{{ item.product.p_name }}</strong></p>
+                        <p>Quantity: {{ item.quantity }} - Total Price: ${{ item.total_price }}</p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <p>Total Amount: ${{ total_price }}</p>
+        <p>If you have any questions, feel free to contact us at:</p>
+        <p><strong>Business Contact:</strong> Mr. Govind Prajapati</p>
+        <p><strong>Phone:</strong> (123) 456-7891</p>
+        <p><strong>Email:</strong> govind.prajapati@travelcrafters.com</p>
+        <p>Best regards,<br>The Travel Crafters Team</p>
+        <div class="footer">
+            <p>&copy; 2024 Travel Crafters. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

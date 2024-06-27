@@ -10,6 +10,23 @@
     <section class="hero-section text-center d-flex align-items-center justify-content-center" style="position: relative; background: url('{% static 'background.png' %}') no-repeat center center; background-size: cover; height: 100vh;">
         <div class="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);"></div>
         <div class="hero-content text-white" style="position: relative; z-index: 1;">
+            <form method="GET" action="{% url 'search_categories' %}" class="mb-4">
+                <div class="input-group">
+                    <!-- Dropdown Menu for Categories -->
+                    <select name="c_id" class="form-control">
+                        <option value="" selected disabled>Select a category...</option>
+                        {% for category in categories %}
+                            <option value="{{ category.pk }}">{{ category.c_name }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-dark">Search</button>
+                    </div>
+                </div>
+            </form>
+            
+
             <h1 class="display-4 font-weight-bold">Welcome to TravelCrafters</h1>
             <p class="lead">Customize your corporate bags with ease and get instant quotes.</p>
             <a href="{% url 'home_page' %}" class="btn btn-dark btn-lg">Start Customizing</a>
@@ -26,8 +43,6 @@
 </section>
 
 <div class="container">
- 
-
     <!-- Features Section -->
     <section class="features-section mt-5 py-5">
         <div class="row text-center">
@@ -48,25 +63,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Featured Products Section -->
-    {% comment %} <section class="featured-products-section mt-5 py-5 bg-light">
-        <h2 class="text-center mb-4">Featured Products</h2>
-        <div class="row">
-            {% for product in featured_products %}
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text">{{ product.short_description }}</p>
-                        <a href="{% url 'product_detail' product.p_id %}" class="btn btn-dark">View Details</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </section> {% endcomment %}
 
     <!-- Testimonials Section -->
     <section class="testimonials-section mt-5 py-5">
@@ -100,4 +96,5 @@
         <a href="{% url 'home_page' %}" class="btn btn-light btn-lg">Customize Now</a>
     </section>
 </div>
+
 {% endblock %}
